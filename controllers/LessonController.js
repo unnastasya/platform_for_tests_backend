@@ -2,6 +2,7 @@ const Lesson = require("../models/Lesson.js");
 const Question = require("../models/Question.js");
 const User = require("../models/User.js");
 const Class = require("../models/Class.js");
+const cloudinary = require("../utils/cloudinary.js");
 
 const addLesson = async (req, res) => {
 	try {
@@ -17,15 +18,33 @@ const addLesson = async (req, res) => {
 		const savedQuestions = [];
 
 		for (const question of questions) {
-			const { questionText, description, criteriaRating, criteria, images } =
-				question;
+			const {
+				questionText,
+				description,
+				criteriaRating,
+				criteria,
+				images,
+			} = question;
+
+			const imagesResult = [];
+			for (let image of images) {
+				const result = await cloudinary.uploader.upload(image.file, {
+					folder: "questions",
+					// width: 300,
+					// crop: "scale"
+				});
+				imagesResult.push({
+					public_id: result.public_id,
+					url: result.secure_url,
+				});
+			}
 
 			const newQuestion = new Question({
 				questionText,
 				description,
 				criteriaRating,
 				criteria,
-                images
+				images: imagesResult,
 			});
 
 			savedQuestions.push(newQuestion);
@@ -150,5 +169,3 @@ module.exports = {
 	deleteLesson,
 	getAvailableLessonsForStudent,
 };
-
-
