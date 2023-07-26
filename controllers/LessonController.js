@@ -85,7 +85,7 @@ const addLesson = async (req, res) => {
 		res.status(201).json(lesson._id);
 	} catch (error) {
 		console.error("Error saving lesson:", error);
-		res.status(500).json({ error: "Failed to save lesson" });
+		res.status(500).json({ errorMessga: "Failed to save lesson", error: error });
 	}
 };
 
