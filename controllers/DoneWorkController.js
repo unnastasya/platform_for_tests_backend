@@ -10,7 +10,7 @@ const addDoneWork = async (req, res) => {
 		class: className,
 		rating,
 		comment,
-        allCriteriaRating
+		allCriteriaRating,
 	} = req.body;
 
 	const doneWork = new DoneWork({
@@ -22,7 +22,7 @@ const addDoneWork = async (req, res) => {
 		class: className,
 		rating,
 		comment,
-        allCriteriaRating
+		allCriteriaRating,
 	});
 
 	doneWork
@@ -51,6 +51,7 @@ const getOneDoneWork = async (req, res) => {
 	const doneWorkId = req.params.id;
 
 	DoneWork.findById(doneWorkId)
+		.populate("student")
 		.then((doneWork) => {
 			if (!doneWork) {
 				return res.status(404).json({ error: "Done work not found" });
