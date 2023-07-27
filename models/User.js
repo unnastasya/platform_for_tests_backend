@@ -17,6 +17,9 @@ const UserSchema = mongoose.Schema(
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "Class",
 		},
+		role: {
+			type: String,
+		},
 	},
 	{
 		timestamps: true,
