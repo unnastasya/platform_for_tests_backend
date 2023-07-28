@@ -17,11 +17,11 @@ const registerUser = async (req, res) => {
 		.save()
 		.then(() => {
 			const result = {
-                _id: newUser._id,
+				_id: newUser._id,
 				fullName: newUser._doc.name + " " + newUser._doc.surname,
 				login: newUser._doc.login,
 				password: newUser._doc.password,
-                role: "student"
+				role: "student",
 			};
 			res.status(200).json(result);
 		})
@@ -39,8 +39,15 @@ const loginUser = async (req, res) => {
 	User.findOne({ login, password })
 		.then((user) => {
 			if (user) {
-                console.log(user)
-				res.status(200).json({ message: "Вы вошли", user: { userId: user._id, fullName: user.name + " " + user.surname, role: user.role || "student"} });
+				console.log(user);
+				res.status(200).json({
+					message: "Вы вошли",
+					user: {
+						userId: user._id,
+						fullName: user.name + " " + user.surname,
+						role: user.role || "student",
+					},
+				});
 			} else {
 				res.status(401).json({ error: "Неверный логин или пароль" });
 			}
@@ -58,10 +65,9 @@ const getUser = async (req, res) => {
 		.then((foundUser) => {
 			if (foundUser) {
 				const result = {
-					name: foundUser._doc.name,
-					surname: foundUser._doc.surname,
-					login: foundUser._doc.login,
-					password: foundUser._doc.password,
+					userId: foundUser._id,
+					fullName: foundUser.name + " " + foundUser.surname,
+					role: foundUser.role || "student",
 				};
 				return res.status(200).json(result);
 			} else {
