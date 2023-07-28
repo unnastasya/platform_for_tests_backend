@@ -4,6 +4,24 @@ const User = require("../models/User.js");
 const Class = require("../models/Class.js");
 const cloudinary = require("../utils/cloudinary.js");
 
+const uploadImage = async (req, res) => {
+	console.log(req.body);
+	try {
+		const { file } = req.body;
+		const fileResult = await cloudinary.uploader.upload(file, {
+			folder: "questions",
+		});
+		const result = { public_id: fileResult.public_id, url: fileResult.url };
+		res.status(201).json(result);
+	} catch (error) {
+		console.error("Error loading image:", error);
+		res.status(500).json({
+			errorMessga: "Failed to load image",
+			error: error,
+		});
+	}
+};
+
 const addLesson = async (req, res) => {
 	try {
 		const {
@@ -13,6 +31,7 @@ const addLesson = async (req, res) => {
 			allCriteriaRating,
 			questions,
 			classes,
+            images
 		} = req.body;
 
 		const savedQuestions = [];
@@ -26,25 +45,12 @@ const addLesson = async (req, res) => {
 				images,
 			} = question;
 
-			const imagesResult = [];
-			for (let image of images) {
-				const result = await cloudinary.uploader.upload(image.file, {
-					folder: "questions",
-					// width: 300,
-					// crop: "scale"
-				});
-				imagesResult.push({
-					public_id: result.public_id,
-					url: result.secure_url,
-				});
-			}
-
 			const newQuestion = new Question({
 				questionText,
 				description,
 				criteriaRating,
 				criteria,
-				images: imagesResult,
+				images,
 			});
 
 			savedQuestions.push(newQuestion);
@@ -85,7 +91,10 @@ const addLesson = async (req, res) => {
 		res.status(201).json(lesson._id);
 	} catch (error) {
 		console.error("Error saving lesson:", error);
-		res.status(500).json({ errorMessga: "Failed to save lesson", error: error });
+		res.status(500).json({
+			errorMessga: "Failed to save lesson",
+			error: error,
+		});
 	}
 };
 
@@ -168,4 +177,5 @@ module.exports = {
 	getOneLesson,
 	deleteLesson,
 	getAvailableLessonsForStudent,
+	uploadImage,
 };

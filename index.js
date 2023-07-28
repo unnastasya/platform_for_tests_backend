@@ -42,18 +42,7 @@ app.use(express.static(__dirname));
 
 app.get("/", (req, res) => res.status(200).json("hello"));
 
-app.post("/upload", upload.single("image"), (req, res) => {
-	res.json({
-		url: `http://localhost:8080/uploads/${req.file.originalname}`,
-	});
-	// let filedata = req.file;
-	// if (!filedata) res.status(400).send("Ошибка при загрузке файла");
-	// else {
-	// 	res.json({
-	// 		url: `http://localhost:8080/uploads/${req.file.originalname}`,
-	// 	});
-	// }
-});
+app.post("/uploadImage", LessonController.uploadImage);
 
 // app.post("/addImage", ImageController.addImage1);
 
