@@ -55,6 +55,7 @@ app.get("/class", ClassController.getClass);
 app.get("/class/:id", ClassController.getOneClass);
 app.delete("/class/:id", ClassController.deleteClass);
 app.post("/classes/:classId/addLesson", ClassController.addLessonToClass);
+app.put("/updateClass/:id", ClassController.updateClass);
 
 app.post("/lesson", LessonController.addLesson);
 app.get("/lesson", LessonController.getLessons);

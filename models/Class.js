@@ -13,6 +13,12 @@ const ClassSchema = mongoose.Schema(
 		studentsCount: {
 			type: Number,
 		},
+        students: [
+			{
+				type: mongoose.Schema.Types.ObjectId,
+				ref: "User",
+			},
+		],
 		lessons: [
 			{
 				type: mongoose.Schema.Types.ObjectId,
