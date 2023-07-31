@@ -39,7 +39,6 @@ const loginUser = async (req, res) => {
 	User.findOne({ login, password })
 		.then((user) => {
 			if (user) {
-				console.log(user);
 				res.status(200).json({
 					message: "Вы вошли",
 					user: {
@@ -49,12 +48,14 @@ const loginUser = async (req, res) => {
 					},
 				});
 			} else {
-				res.status(401).json({ error: "Неверный логин или пароль" });
+				return res
+					.status(401)
+					.json({ errorMessage: "Неверный логин или пароль" });
 			}
 		})
 		.catch((error) => {
-			console.error("Пользователь не найден", error);
-			res.status(500).json({ error: "Пользователь не найден" });
+			console.error("Не удалось авторизоваться", error);
+			res.status(500).json({ errorMessage: "Не удалось авторизоваться" });
 		});
 };
 

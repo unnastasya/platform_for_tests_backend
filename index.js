@@ -10,7 +10,6 @@ const {
 	ClassController,
 	LessonController,
 	DoneWorkController,
-	ImageController,
 } = require("./controllers/index.js");
 
 mongoose
