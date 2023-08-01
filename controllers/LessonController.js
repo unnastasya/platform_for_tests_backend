@@ -31,7 +31,6 @@ const addLesson = async (req, res) => {
 			allCriteriaRating,
 			questions,
 			classes,
-            images
 		} = req.body;
 
 		const savedQuestions = [];
@@ -59,8 +58,8 @@ const addLesson = async (req, res) => {
 
 		const savedClasses = [];
 
-		for (const classId of classes) {
-			const existingClass = await Class.findById(classId);
+		for (const oneClass of classes) {
+			const existingClass = await Class.findById(oneClass._id);
 
 			if (existingClass) {
 				savedClasses.push(existingClass);
@@ -79,11 +78,13 @@ const addLesson = async (req, res) => {
 		await lesson.save();
 
 		// Обновляем поле lessons у классов
-		for (const classId of classes) {
-			const existingClass = await Class.findById(classId);
-
+		for (const oneClass of classes) {
+			const existingClass = await Class.findById(oneClass._id);
+			console.log("addLesson");
+			console.log(existingClass);
+			console.log(lesson);
 			if (existingClass) {
-				existingClass.lessons.push(lesson);
+				existingClass.lessons.push(lesson._id);
 				await existingClass.save();
 			}
 		}
@@ -162,7 +163,10 @@ const getAvailableLessonsForStudent = async (req, res) => {
 			throw new Error("User not found");
 		}
 
-		const lessons = user.class.lessons;
+		const lessons = user.class.lessons
+			
+
+		console.log("lessons", lessons);
 
 		res.status(200).json(lessons);
 	} catch (error) {
