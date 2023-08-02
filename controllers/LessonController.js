@@ -175,6 +175,36 @@ const getAvailableLessonsForStudent = async (req, res) => {
 	}
 };
 
+const updateLesson = async (req, res) => {
+    const lessonId = req.params.id;
+  const { name, description, doneCount, allCriteriaRating, questions, classes } = req.body;
+
+  try {
+    // Проверка, существует ли урок с данным идентификатором
+    const existingLesson = await Lesson.findById(lessonId);
+
+    if (!existingLesson) {
+      return res.status(404).json({ error: "Lesson not found" });
+    }
+
+    // Обновление данных урока
+    existingLesson.name = name;
+    existingLesson.description = description;
+    existingLesson.doneCount = doneCount;
+    existingLesson.allCriteriaRating = allCriteriaRating;
+    existingLesson.questions = questions; // Массив вопросов передается целиком для обновления
+    existingLesson.classes = classes; // Массив классов передается целиком для обновления
+
+    // Сохранение обновленного урока в базе данных
+    await existingLesson.save();
+
+    res.status(200).json(existingLesson._id);
+  } catch (error) {
+    console.error("Error updating lesson:", error);
+    res.status(500).json({ error: "Failed to update lesson" });
+  }
+}
+
 module.exports = {
 	addLesson,
 	getLessons,
@@ -182,4 +212,5 @@ module.exports = {
 	deleteLesson,
 	getAvailableLessonsForStudent,
 	uploadImage,
+    updateLesson
 };

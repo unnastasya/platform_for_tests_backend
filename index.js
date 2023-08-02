@@ -65,6 +65,7 @@ app.get(
 	"/oneSudentsLessons/:id",
 	LessonController.getAvailableLessonsForStudent
 );
+app.put("/lesson/:id", LessonController.updateLesson);
 
 app.post("/doneWork", DoneWorkController.addDoneWork);
 app.get("/doneWork", DoneWorkController.getDoneWorks);
