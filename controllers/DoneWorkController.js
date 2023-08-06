@@ -1,4 +1,5 @@
 const DoneWork = require("../models/DoneWork.js");
+const Lesson = require("../models/Lesson.js");
 
 const addDoneWork = async (req, res) => {
     const {
