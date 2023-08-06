@@ -39,7 +39,14 @@ const addDoneWork = async (req, res) => {
 const getDoneWorks = async (req, res) => {
 	DoneWork.find({})
 		.populate("lessonId")
-		.populate("student")
+		.populate({
+			path: "student",
+			populate: {
+				path: "class",
+				model: "Class",
+			},
+		})
+		// .populate("student")
 		.then((doneWorks) => {
 			res.json(doneWorks);
 		})
