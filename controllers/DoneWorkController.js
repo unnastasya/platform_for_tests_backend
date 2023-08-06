@@ -1,40 +1,47 @@
 const DoneWork = require("../models/DoneWork.js");
 
 const addDoneWork = async (req, res) => {
-	const {
-		student,
-		lessonId,
-		answers,
-		isVerified,
-		school,
-		class: className,
-		rating,
-		comment,
-		allCriteriaRating,
-	} = req.body;
-
-	const doneWork = new DoneWork({
-		student,
-		lessonId,
-		answers,
-		isVerified,
-		school,
-		class: className,
-		rating,
-		comment,
-		allCriteriaRating,
-	});
-
-	doneWork
-		.save()
-		.then((savedDoneWork) => {
-			res.status(201).json({ id: savedDoneWork._id });
-		})
-		.catch((error) => {
-			console.error("Error saving done work:", error);
-			res.status(500).json({ error: "Failed to save done work" });
-		});
-};
+    const {
+      student,
+      lessonId,
+      answers,
+      isVerified,
+      school,
+      class: className,
+      rating,
+      comment,
+      allCriteriaRating,
+    } = req.body;
+  
+    const doneWork = new DoneWork({
+      student,
+      lessonId,
+      answers,
+      isVerified,
+      school,
+      class: className,
+      rating,
+      comment,
+      allCriteriaRating,
+    });
+  
+    try {
+      // Сохраняем готовую работу
+      const savedDoneWork = await doneWork.save();
+  
+      // Увеличиваем счетчик doneCount у соответствующего урока
+      await Lesson.updateOne(
+        { _id: lessonId },
+        { $inc: { doneCount: 1 } }
+      );
+  
+      res.status(201).json({ id: savedDoneWork._id });
+    } catch (error) {
+      console.error("Error saving done work:", error);
+      res.status(500).json({ error: "Failed to save done work" });
+    }
+  };
+  
 
 const getDoneWorks = async (req, res) => {
 	DoneWork.find({})
