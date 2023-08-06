@@ -38,6 +38,8 @@ const addDoneWork = async (req, res) => {
 
 const getDoneWorks = async (req, res) => {
 	DoneWork.find({})
+		.populate("lessonId")
+		.populate("student")
 		.then((doneWorks) => {
 			res.json(doneWorks);
 		})
@@ -51,6 +53,7 @@ const getOneDoneWork = async (req, res) => {
 	const doneWorkId = req.params.id;
 
 	DoneWork.findById(doneWorkId)
+		.populate("lessonId")
 		.populate("student")
 		.then((doneWork) => {
 			if (!doneWork) {
