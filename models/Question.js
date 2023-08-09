@@ -16,7 +16,7 @@ const questionSchema = mongoose.Schema(
 		criteriaRating: {
 			type: Number,
 		},
-		criteria: [{ text: String, value: Number }],
+		criteria: [{ text: String, value: Number, status: Boolean }],
 	},
 	{
 		timestamps: true,

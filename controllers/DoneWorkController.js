@@ -12,6 +12,7 @@ const addDoneWork = async (req, res) => {
       rating,
       comment,
       allCriteriaRating,
+      criteriaStatuses
     } = req.body;
   
     const doneWork = new DoneWork({
@@ -24,6 +25,7 @@ const addDoneWork = async (req, res) => {
       rating,
       comment,
       allCriteriaRating,
+      criteriaStatuses
     });
   
     try {

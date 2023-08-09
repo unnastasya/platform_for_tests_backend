@@ -31,6 +31,7 @@ const addLesson = async (req, res) => {
 			allCriteriaRating,
 			questions,
 			classes,
+            criteria
 		} = req.body;
 
 		const savedQuestions = [];
@@ -40,7 +41,6 @@ const addLesson = async (req, res) => {
 				questionText,
 				description,
 				criteriaRating,
-				criteria,
 				images,
 			} = question;
 
@@ -73,6 +73,7 @@ const addLesson = async (req, res) => {
 			allCriteriaRating,
 			classes: savedClasses,
 			questions: savedQuestions,
+            criteria
 		});
 
 		await lesson.save();

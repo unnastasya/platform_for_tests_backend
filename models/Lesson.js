@@ -18,6 +18,7 @@ const lessonSchema = mongoose.Schema(
 			type: Number,
 		},
 		questions: [{ type: mongoose.Schema.Types.ObjectId, ref: "Question" }],
+		criteria: [{ text: String, value: Number, status: Boolean }],
 		classes: [
 			{
 				type: mongoose.Schema.Types.ObjectId,
