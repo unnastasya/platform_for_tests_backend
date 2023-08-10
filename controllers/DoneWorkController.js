@@ -106,7 +106,15 @@ const getDoneWorksByStudentId = async (req, res) => {
 	const studentId = req.params.studentId;
 
 	try {
-		const doneWorks = await DoneWork.find({ student: studentId });
+		const doneWorks = await DoneWork.find({ student: studentId })
+			.populate("lessonId")
+			.populate({
+				path: "student",
+				populate: {
+					path: "class",
+					model: "Class",
+				},
+			});
 		res.status(200).json(doneWorks);
 	} catch (error) {
 		console.error("Error retrieving done works:", error);
