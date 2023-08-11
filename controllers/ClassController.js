@@ -8,8 +8,8 @@ const addClass = async (req, res) => {
 
 	try {
 		const newClass = new Class({
-			school,
-			class: className,
+			school: school + "школа",
+			class: className + "класс",
 			studentsCount: people.length,
 			students: [],
 		});
