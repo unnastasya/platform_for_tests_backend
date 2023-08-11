@@ -36,7 +36,7 @@ const registerUser = async (req, res) => {
 const loginUser = async (req, res) => {
 	const { login, password } = req.body;
 
-	User.findOne({ login, password })
+	User.findOne({ login, password }).populate("class")
 		.then((user) => {
 			if (user) {
 				res.status(200).json({
@@ -45,6 +45,8 @@ const loginUser = async (req, res) => {
 						userId: user._id,
 						fullName: user.name + " " + user.surname,
 						role: user.role || "student",
+                        school: user.class.school || "",
+                        class: user.class.class || ""
 					},
 				});
 			} else {
