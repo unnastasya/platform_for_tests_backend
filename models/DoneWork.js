@@ -10,12 +10,6 @@ const doneWorkSchema = mongoose.Schema(
 		isVerified: {
 			type: Boolean,
 		},
-		school: {
-			type: String,
-		},
-		class: {
-			type: String,
-		},
 		rating: {
 			type: Number,
 		},
