@@ -63,14 +63,13 @@ const getOneDoneWork = async (req, res) => {
 	const doneWorkId = req.params.id;
 	console.log(doneWorkId);
 	DoneWork.findById(doneWorkId)
-		.populate("lessonId")
-		.populate({
-			path: "student",
-			populate: {
-				path: "class",
-				model: "Class",
-			},
-		})
+    .populate({
+        path: "student",
+        populate: {
+            path: "class",
+            model: "Class",
+        },
+    })
 		.then((doneWork) => {
 			console.log(doneWork);
 			if (!doneWork) {
