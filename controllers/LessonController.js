@@ -193,13 +193,39 @@ const updateLesson = async (req, res) => {
 		if (!existingLesson) {
 			return res.status(404).json({ error: "Lesson not found" });
 		}
+		const savedQuestions = [];
+
+		for (const question of questions) {
+			// if (question._id) {
+			// 	savedQuestions.push(question);
+			// } else {
+				const {
+					questionText,
+					description,
+					criteriaRating,
+					images,
+					criteria,
+				} = question;
+
+				const newQuestion = new Question({
+					questionText,
+					description,
+					criteriaRating,
+					criteria,
+					images,
+				});
+
+				savedQuestions.push(newQuestion);
+				await newQuestion.save();
+			// }
+		}
 
 		// Обновление данных урока
 		existingLesson.name = name;
 		existingLesson.description = description;
 		existingLesson.doneCount = doneCount;
 		existingLesson.allCriteriaRating = allCriteriaRating;
-		existingLesson.questions = questions; // Массив вопросов передается целиком для обновления
+		existingLesson.questions = savedQuestions; // Массив вопросов передается целиком для обновления
 		existingLesson.classes = classes; // Массив классов передается целиком для обновления
 
 		// Сохранение обновленного урока в базе данных
