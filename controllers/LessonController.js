@@ -196,9 +196,26 @@ const updateLesson = async (req, res) => {
 		const savedQuestions = [];
 
 		for (const question of questions) {
-			// if (question._id) {
-			// 	savedQuestions.push(question);
-			// } else {
+			if ("_id" in question) {
+				const existingQuestion = await Question.findById(question._id);
+				const {
+					questionText,
+					description,
+					criteriaRating,
+					images,
+					criteria,
+				} = question;
+
+				existingQuestion.questionText = questionText;
+				existingQuestion.description = description;
+				existingQuestion.criteriaRating = criteriaRating;
+				existingQuestion.images = images;
+				existingQuestion.criteria = criteria;
+
+				await existingQuestion.save();
+
+				savedQuestions.push(question);
+			} else {
 				const {
 					questionText,
 					description,
@@ -217,7 +234,7 @@ const updateLesson = async (req, res) => {
 
 				savedQuestions.push(newQuestion);
 				await newQuestion.save();
-			// }
+			}
 		}
 
 		// Обновление данных урока
