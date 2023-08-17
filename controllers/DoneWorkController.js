@@ -82,7 +82,7 @@ const getOneDoneWork = async (req, res) => {
 
 const updateDoneWork = async (req, res) => {
 	const { id } = req.params;
-	const { isVerified, rating, comment, criteriaStatuses } = req.body;
+	const { isVerified, rating, comment, successCriterias } = req.body;
 
 	try {
 		const doneWork = await DoneWork.findById(id);
@@ -94,6 +94,7 @@ const updateDoneWork = async (req, res) => {
 		doneWork.isVerified = isVerified;
 		doneWork.rating = rating;
 		doneWork.comment = comment;
+        doneWork.successCriterias = successCriterias
 
 		await doneWork.save();
 

@@ -19,7 +19,7 @@ const doneWorkSchema = mongoose.Schema(
 		allCriteriaRating: {
 			type: Number,
 		},
-		criteriaStatuses: { type: Array },
+		successCriterias: { type: Array },
 	},
 	{
 		timestamps: true,
