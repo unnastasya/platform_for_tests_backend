@@ -20,6 +20,9 @@ const UserSchema = mongoose.Schema(
 		role: {
 			type: String,
 		},
+		authorLessons: [
+			{ type: mongoose.Schema.Types.ObjectId, ref: "Lesson" },
+		],
 	},
 	{
 		timestamps: true,

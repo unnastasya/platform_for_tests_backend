@@ -58,7 +58,7 @@ app.post("/classes/:classId/addLesson", ClassController.addLessonToClass);
 app.put("/class/:id", ClassController.updateClass);
 
 app.post("/lesson", LessonController.addLesson);
-app.get("/lesson", LessonController.getLessons);
+app.get("/lesson/:authorId", LessonController.getLessons);
 app.get("/lesson/:id", LessonController.getOneLesson);
 app.delete("/lesson/:id", LessonController.deleteLesson);
 app.get(
@@ -68,7 +68,7 @@ app.get(
 app.put("/lesson/:id", LessonController.updateLesson);
 
 app.post("/doneWork", DoneWorkController.addDoneWork);
-app.get("/doneWork", DoneWorkController.getDoneWorks);
+app.get("/doneWork/:authorId", DoneWorkController.getDoneWorks);
 app.get("/doneWork/:id", DoneWorkController.getOneDoneWork);
 app.get(
 	"/doneWorkByStudentId/:studentId",

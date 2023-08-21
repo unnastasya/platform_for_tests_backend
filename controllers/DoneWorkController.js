@@ -1,5 +1,6 @@
 const DoneWork = require("../models/DoneWork.js");
 const Lesson = require("../models/Lesson.js");
+const User = require("../models/User.js");
 
 const addDoneWork = async (req, res) => {
 	const {
@@ -37,8 +38,40 @@ const addDoneWork = async (req, res) => {
 };
 
 const getDoneWorks = async (req, res) => {
-	DoneWork.find({})
-		.populate("lessonId")
+	try {
+		const authorId = req.params.authorId; // Получаем id автора из параметров запроса
+
+		// Находим пользователя по айди автора
+		const authorUser = await User.findById(authorId);
+
+		if (!authorUser) {
+			return res.status(404).json({ error: "Author not found" });
+		}
+
+		// Находим все готовые работы, у которых lessonId присутствует в authorLessons у пользователя
+		const doneWorks = await DoneWork.find({
+			lessonId: { $in: authorUser.authorLessons },
+		})
+			.populate("lessonId")
+			.populate({
+				path: "student",
+				populate: {
+					path: "class",
+					model: "Class",
+				},
+			});
+
+		res.json(doneWorks);
+	} catch (error) {
+		console.error("Error retrieving done works:", error);
+		res.status(500).json({ error: "Failed to retrieve done works" });
+	}
+};
+
+const getOneDoneWork = async (req, res) => {
+	const doneWorkId = req.params.id;
+	console.log(doneWorkId);
+	DoneWork.findById(doneWorkId)
 		.populate({
 			path: "student",
 			populate: {
@@ -46,26 +79,6 @@ const getDoneWorks = async (req, res) => {
 				model: "Class",
 			},
 		})
-		.then((doneWorks) => {
-			res.json(doneWorks);
-		})
-		.catch((error) => {
-			console.error("Error retrieving done works:", error);
-			res.status(500).json({ error: "Failed to retrieve done works" });
-		});
-};
-
-const getOneDoneWork = async (req, res) => {
-	const doneWorkId = req.params.id;
-	console.log(doneWorkId);
-	DoneWork.findById(doneWorkId)
-    .populate({
-        path: "student",
-        populate: {
-            path: "class",
-            model: "Class",
-        },
-    })
 		.then((doneWork) => {
 			console.log(doneWork);
 			if (!doneWork) {
@@ -94,7 +107,7 @@ const updateDoneWork = async (req, res) => {
 		doneWork.isVerified = isVerified;
 		doneWork.rating = rating;
 		doneWork.comment = comment;
-        doneWork.successCriterias = successCriterias
+		doneWork.successCriterias = successCriterias;
 
 		await doneWork.save();
 

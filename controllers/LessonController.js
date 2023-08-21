@@ -31,6 +31,7 @@ const addLesson = async (req, res) => {
 			allCriteriaRating,
 			questions,
 			classes,
+			authorId,
 		} = req.body;
 
 		const savedQuestions = [];
@@ -73,7 +74,7 @@ const addLesson = async (req, res) => {
 			allCriteriaRating,
 			classes: savedClasses,
 			questions: savedQuestions,
-			// criteria,
+			authorId,
 		});
 
 		await lesson.save();
@@ -81,13 +82,19 @@ const addLesson = async (req, res) => {
 		// Обновляем поле lessons у классов
 		for (const oneClass of classes) {
 			const existingClass = await Class.findById(oneClass._id);
-			console.log("addLesson");
-			console.log(existingClass);
-			console.log(lesson);
+
 			if (existingClass) {
 				existingClass.lessons.push(lesson._id);
 				await existingClass.save();
 			}
+		}
+
+		// Добавляем айди урока пользователю в поле authorLessons
+		const authorUser = await User.findById(authorId);
+
+		if (authorUser) {
+			authorUser.authorLessons.push(lesson._id);
+			await authorUser.save();
 		}
 
 		res.status(201).json(lesson._id);
@@ -100,17 +107,20 @@ const addLesson = async (req, res) => {
 	}
 };
 
+
 const getLessons = async (req, res) => {
-	Lesson.find()
-		.populate("questions")
-		.populate("classes")
-		.then((lessons) => {
-			res.status(200).json(lessons);
-		})
-		.catch((error) => {
-			console.error("Error retrieving lessons:", error);
-			res.status(500).json({ error: "Failed to retrieve lessons" });
-		});
+	try {
+		const authorId = req.params.authorId; // Получаем id автора из параметров запроса
+
+		const lessons = await Lesson.find({ authorId })
+			.populate("questions")
+			.populate("classes");
+
+		res.status(200).json(lessons);
+	} catch (error) {
+		console.error("Error retrieving lessons:", error);
+		res.status(500).json({ error: "Failed to retrieve lessons" });
+	}
 };
 
 const getOneLesson = async (req, res) => {

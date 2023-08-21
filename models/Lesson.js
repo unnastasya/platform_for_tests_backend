@@ -25,6 +25,10 @@ const lessonSchema = mongoose.Schema(
 				ref: "Class",
 			},
 		],
+		authorId: {
+			type: String,
+			required: true,
+		},
 	},
 	{
 		timestamps: true,
