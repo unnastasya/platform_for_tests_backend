@@ -144,8 +144,13 @@ const deleteLesson = async (req, res) => {
 	const lessonId = req.params.id;
 
 	try {
+		const lesson = await Lesson.findById(lessonId);
+
 		// Удаление связанных вопросов
-		await Question.deleteMany({ lessonId });
+
+		lesson.questions.forEach(async (questionId) => {
+			await Question.findByIdAndDelete(questionId);
+		});
 
 		// Удаление урока
 		await Lesson.findByIdAndDelete(lessonId);
