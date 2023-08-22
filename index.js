@@ -58,7 +58,7 @@ app.post("/classes/:classId/addLesson", ClassController.addLessonToClass);
 app.put("/class/:id", ClassController.updateClass);
 
 app.post("/lesson", LessonController.addLesson);
-app.get("/lesson/:authorId", LessonController.getLessons);
+app.get("/allLessons/:authorId", LessonController.getLessons);
 app.get("/lesson/:id", LessonController.getOneLesson);
 app.delete("/lesson/:id", LessonController.deleteLesson);
 app.get(
