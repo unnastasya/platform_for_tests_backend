@@ -68,7 +68,7 @@ app.get(
 app.put("/lesson/:id", LessonController.updateLesson);
 
 app.post("/doneWork", DoneWorkController.addDoneWork);
-app.get("/doneWork/:authorId", DoneWorkController.getDoneWorks);
+app.get("/doneWorks/:authorId", DoneWorkController.getDoneWorks);
 app.get("/doneWork/:id", DoneWorkController.getOneDoneWork);
 app.get(
 	"/doneWorkByStudentId/:activeUserId/:studentId",
