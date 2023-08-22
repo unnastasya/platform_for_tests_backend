@@ -71,7 +71,7 @@ app.post("/doneWork", DoneWorkController.addDoneWork);
 app.get("/doneWork/:authorId", DoneWorkController.getDoneWorks);
 app.get("/doneWork/:id", DoneWorkController.getOneDoneWork);
 app.get(
-	"/doneWorkByStudentId/:studentId",
+	"/doneWorkByStudentId/:activeUserId/:studentId",
 	DoneWorkController.getDoneWorksByStudentId
 );
 app.put("/doneWork/:id", DoneWorkController.updateDoneWork);

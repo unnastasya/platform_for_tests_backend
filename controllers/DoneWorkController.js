@@ -120,9 +120,19 @@ const updateDoneWork = async (req, res) => {
 
 const getDoneWorksByStudentId = async (req, res) => {
 	const studentId = req.params.studentId;
+	const activeUserId = req.params.activeUserId;
 
 	try {
-		const doneWorks = await DoneWork.find({ student: studentId })
+		const authorUser = await User.findById(activeUserId);
+
+		if (!authorUser) {
+			return res.status(404).json({ error: "Author not found" });
+		}
+
+		const doneWorks = await DoneWork.find({
+			student: studentId,
+			lessonId: { $in: authorUser.authorLessons },
+		})
 			.populate("lessonId")
 			.populate({
 				path: "student",
