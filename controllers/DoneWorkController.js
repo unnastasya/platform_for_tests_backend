@@ -68,6 +68,28 @@ const getDoneWorks = async (req, res) => {
 	}
 };
 
+const getStudentsDoneWorks = async (req, res) => {
+	try {
+		const studentId = req.params.studentId; // Получаем id автора из параметров запроса
+
+		// Находим все готовые работы, у которых lessonId присутствует в authorLessons у пользователя
+		const doneWorks = await DoneWork.find(studentId)
+			.populate("lessonId")
+			.populate({
+				path: "student",
+				populate: {
+					path: "class",
+					model: "Class",
+				},
+			});
+
+		res.json(doneWorks);
+	} catch (error) {
+		console.error("Error retrieving done works:", error);
+		res.status(500).json({ error: "Failed to retrieve done works" });
+	}
+};
+
 const getOneDoneWork = async (req, res) => {
 	const doneWorkId = req.params.id;
 	console.log(doneWorkId);
@@ -154,4 +176,5 @@ module.exports = {
 	getOneDoneWork,
 	updateDoneWork,
 	getDoneWorksByStudentId,
+    getStudentsDoneWorks
 };
