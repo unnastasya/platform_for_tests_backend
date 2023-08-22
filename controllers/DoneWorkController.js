@@ -73,7 +73,7 @@ const getStudentsDoneWorks = async (req, res) => {
 		const studentId = req.params.studentId; // Получаем id автора из параметров запроса
 
 		// Находим все готовые работы, у которых lessonId присутствует в authorLessons у пользователя
-		const doneWorks = await DoneWork.find({studentId})
+		const doneWorks = await DoneWork.find({ student: studentId })
 			.populate("lessonId")
 			.populate({
 				path: "student",
@@ -92,7 +92,7 @@ const getStudentsDoneWorks = async (req, res) => {
 
 const getOneDoneWork = async (req, res) => {
 	const doneWorkId = req.params.id;
-	console.log(doneWorkId);
+
 	DoneWork.findById(doneWorkId)
 		.populate({
 			path: "student",
@@ -102,7 +102,6 @@ const getOneDoneWork = async (req, res) => {
 			},
 		})
 		.then((doneWork) => {
-			console.log(doneWork);
 			if (!doneWork) {
 				return res.status(404).json({ error: "Done work not found" });
 			}
@@ -176,5 +175,5 @@ module.exports = {
 	getOneDoneWork,
 	updateDoneWork,
 	getDoneWorksByStudentId,
-    getStudentsDoneWorks
+	getStudentsDoneWorks,
 };

@@ -5,7 +5,6 @@ const Class = require("../models/Class.js");
 const cloudinary = require("../utils/cloudinary.js");
 
 const uploadImage = async (req, res) => {
-	console.log(req.body);
 	try {
 		const { file } = req.body;
 		const fileResult = await cloudinary.uploader.upload(file, {
@@ -107,7 +106,6 @@ const addLesson = async (req, res) => {
 	}
 };
 
-
 const getLessons = async (req, res) => {
 	try {
 		const authorId = req.params.authorId; // Получаем id автора из параметров запроса
@@ -175,8 +173,6 @@ const getAvailableLessonsForStudent = async (req, res) => {
 		}
 
 		const lessons = user.class.lessons;
-
-		console.log("lessons", lessons);
 
 		res.status(200).json(lessons);
 	} catch (error) {

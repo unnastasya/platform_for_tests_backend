@@ -128,9 +128,6 @@ const updateClass = async (req, res) => {
 	const classId = req.params.id;
 	const { school, class: className, people } = req.body;
 
-    console.log("PEOPLE", people)
-    console.log("ID", classId)
-
 	try {
 		const existingClass = await Class.findById(classId);
 
@@ -141,7 +138,7 @@ const updateClass = async (req, res) => {
 		existingClass.school = school;
 		existingClass.class = className;
 		existingClass.studentsCount = people.length;
-        existingClass.students = people;
+		existingClass.students = people;
 
 		const existingUsers = await User.find({
 			login: { $in: people.map((person) => person.login) },
@@ -183,8 +180,6 @@ const updateClass = async (req, res) => {
 		}
 
 		await existingClass.save();
-
-        console.log("existingClass", existingClass)
 
 		res.status(200).json(savedUsers);
 	} catch (error) {
