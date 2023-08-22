@@ -73,7 +73,7 @@ const getStudentsDoneWorks = async (req, res) => {
 		const studentId = req.params.studentId; // Получаем id автора из параметров запроса
 
 		// Находим все готовые работы, у которых lessonId присутствует в authorLessons у пользователя
-		const doneWorks = await DoneWork.find(studentId)
+		const doneWorks = await DoneWork.find({studentId})
 			.populate("lessonId")
 			.populate({
 				path: "student",
