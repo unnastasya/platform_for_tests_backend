@@ -29,6 +29,16 @@ const lessonSchema = mongoose.Schema(
 			type: String,
 			required: true,
 		},
+		isVisible: {
+			type: Boolean,
+			default: true,
+			require: true,
+		},
+		isDeleted: {
+			type: Boolean,
+			default: false,
+			require: true,
+		},
 	},
 	{
 		timestamps: true,

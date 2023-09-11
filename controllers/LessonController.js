@@ -110,7 +110,7 @@ const getLessons = async (req, res) => {
 	try {
 		const authorId = req.params.authorId; // Получаем id автора из параметров запроса
 
-		const lessons = await Lesson.find({ authorId })
+		const lessons = await Lesson.find({ authorId, isDeleted: false })
 			.populate("questions")
 			.populate("classes");
 
@@ -146,14 +146,9 @@ const deleteLesson = async (req, res) => {
 	try {
 		const lesson = await Lesson.findById(lessonId);
 
-		// Удаление связанных вопросов
+		lesson.isDeleted = true;
 
-		lesson.questions.forEach(async (questionId) => {
-			await Question.findByIdAndDelete(questionId);
-		});
-
-		// Удаление урока
-		await Lesson.findByIdAndDelete(lessonId);
+		await lesson.save();
 
 		res.sendStatus(200);
 	} catch (error) {
@@ -177,7 +172,9 @@ const getAvailableLessonsForStudent = async (req, res) => {
 			throw new Error("User not found");
 		}
 
-		const lessons = user.class.lessons;
+		const lessons = user.class.lessons.filter(
+			(el) => el.isDeleted == false && el.isVisible == true
+		);
 
 		res.status(200).json(lessons);
 	} catch (error) {
@@ -266,6 +263,20 @@ const updateLesson = async (req, res) => {
 	}
 };
 
+const changeVisible = async (req, res) => {
+	const lessonId = req.params.id;
+
+	try {
+		const existingLesson = await Lesson.findById(lessonId);
+		existingLesson.isVisible = !existingLesson.isVisible;
+		await existingLesson.save();
+		res.status(200);
+	} catch (error) {
+		console.error("Error updating lesson:", error);
+		res.status(500).json({ error: "Failed to update lesson" });
+	}
+};
+
 module.exports = {
 	addLesson,
 	getLessons,
@@ -274,4 +285,5 @@ module.exports = {
 	getAvailableLessonsForStudent,
 	uploadImage,
 	updateLesson,
+	changeVisible,
 };

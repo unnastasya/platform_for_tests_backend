@@ -19,6 +19,10 @@ const ClassSchema = mongoose.Schema(
 				ref: "User",
 			},
 		],
+        authorId: {
+			type: String,
+			required: true,
+		},
 		lessons: [
 			{
 				type: mongoose.Schema.Types.ObjectId,

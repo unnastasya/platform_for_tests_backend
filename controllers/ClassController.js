@@ -4,7 +4,7 @@ const User = require("../models/User.js");
 const { faker } = require("@faker-js/faker");
 
 const addClass = async (req, res) => {
-	const { school, class: className, people } = req.body;
+	const { school, class: className, people, authorId } = req.body;
 
 	try {
 		const newClass = new Class({
@@ -12,6 +12,7 @@ const addClass = async (req, res) => {
 			class: className + " класс",
 			studentsCount: people.length,
 			students: [],
+			authorId,
 		});
 
 		await newClass.save();
@@ -53,8 +54,31 @@ const addClass = async (req, res) => {
 	}
 };
 
+const getUsers = async (req, res) => {
+	const classId = req.params.id;
+	const users = [];
+	Class.findById(classId)
+		.populate("students")
+		.then((foundClass) => {
+			for (let user of foundClass.students) {
+				users.push({
+					fullName: user.name + " " + user.surname,
+					login: user.login,
+					password: user.password,
+				});
+			}
+			res.status(201).json(users);
+		})
+		.catch((error) => {
+			console.error("Error retrieving class:", error);
+			res.status(500).json({ error: "Failed to retrieve class" });
+		});
+};
+
 const getClass = async (req, res) => {
-	Class.find()
+	const authorId = req.params.authorId;
+
+	Class.find({ authorId })
 		.then((classes) => {
 			res.status(200).json(classes);
 		})
@@ -138,7 +162,6 @@ const updateClass = async (req, res) => {
 		existingClass.school = school;
 		existingClass.class = className;
 		existingClass.studentsCount = people.length;
-		existingClass.students = people;
 
 		const existingUsers = await User.find({
 			login: { $in: people.map((person) => person.login) },
@@ -175,9 +198,10 @@ const updateClass = async (req, res) => {
 					password: savedUser.password,
 				});
 
-				existingClass.students.push(savedUser._id);
+				existingUsers.push(savedUser._id);
 			}
 		}
+		existingClass.students = existingUsers;
 
 		await existingClass.save();
 
@@ -195,4 +219,5 @@ module.exports = {
 	deleteClass,
 	addLessonToClass,
 	updateClass,
+	getUsers,
 };
