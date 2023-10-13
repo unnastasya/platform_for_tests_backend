@@ -270,7 +270,7 @@ const changeVisible = async (req, res) => {
 		const existingLesson = await Lesson.findById(lessonId);
 		existingLesson.isVisible = !existingLesson.isVisible;
 		await existingLesson.save();
-		res.status(200);
+		res.status(200).json();
 	} catch (error) {
 		console.error("Error updating lesson:", error);
 		res.status(500).json({ error: "Failed to update lesson" });
