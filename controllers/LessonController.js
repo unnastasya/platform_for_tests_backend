@@ -25,7 +25,6 @@ const addLesson = async (req, res) => {
 	try {
 		const {
 			name,
-			description,
 			doneCount,
 			allCriteriaRating,
 			questions,
@@ -38,7 +37,6 @@ const addLesson = async (req, res) => {
 		for (const question of questions) {
 			const {
 				questionText,
-				description,
 				criteriaRating,
 				images,
 				criteria,
@@ -46,7 +44,6 @@ const addLesson = async (req, res) => {
 
 			const newQuestion = new Question({
 				questionText,
-				description,
 				criteriaRating,
 				criteria,
 				images,
@@ -68,7 +65,6 @@ const addLesson = async (req, res) => {
 
 		const lesson = new Lesson({
 			name,
-			description,
 			doneCount,
 			allCriteriaRating,
 			classes: savedClasses,

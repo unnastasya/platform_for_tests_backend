@@ -6,12 +6,9 @@ const lessonSchema = mongoose.Schema(
 			type: String,
 			required: true,
 		},
-		description: {
-			type: String,
-			required: true,
-		},
 		doneCount: {
 			type: Number,
+            default: 0,
 			required: true,
 		},
 		allCriteriaRating: {

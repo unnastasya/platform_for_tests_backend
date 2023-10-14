@@ -9,10 +9,6 @@ const questionSchema = mongoose.Schema(
 			type: String,
 			required: true,
 		},
-		description: {
-			type: String,
-			required: true,
-		},
 		criteriaRating: {
 			type: Number,
 		},
