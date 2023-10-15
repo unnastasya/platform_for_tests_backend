@@ -67,7 +67,7 @@ const getUser = async (req, res) => {
 			if (foundUser) {
 				const result = {
 					userId: foundUser._id,
-					fullName: foundUser.name + " " + foundUser.surname,
+					fullName: foundUser.surname + " " + foundUser.name,
 					role: foundUser.role || "student",
 				};
 				return res.status(200).json(result);
