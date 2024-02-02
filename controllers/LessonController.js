@@ -21,6 +21,22 @@ const uploadImage = async (req, res) => {
 	}
 };
 
+const addQuestion = async (question, savedQuestions) => {
+	try {
+		const { questionText, criteriaRating, images, criteria } = question;
+
+		const newQuestion = new Question({
+			questionText,
+			criteriaRating,
+			criteria,
+			images,
+		});
+
+		savedQuestions.push(newQuestion);
+		await newQuestion.save();
+	} catch (error) {}
+};
+
 const addLesson = async (req, res) => {
 	try {
 		const {
@@ -35,28 +51,16 @@ const addLesson = async (req, res) => {
 		const savedQuestions = [];
 
 		for (const question of questions) {
-			const {
-				questionText,
-				criteriaRating,
-				images,
-				criteria,
-			} = question;
-
-			const newQuestion = new Question({
-				questionText,
-				criteriaRating,
-				criteria,
-				images,
-			});
-
-			savedQuestions.push(newQuestion);
-			await newQuestion.save();
+			addQuestion(question, savedQuestions);
 		}
 
 		const savedClasses = [];
 
 		for (const oneClass of classes) {
+			console.log("oneClass", oneClass);
+
 			const existingClass = await Class.findById(oneClass._id);
+			console.log("existingClass", existingClass);
 
 			if (existingClass) {
 				savedClasses.push(existingClass);
@@ -67,7 +71,7 @@ const addLesson = async (req, res) => {
 			name,
 			doneCount,
 			allCriteriaRating,
-			classes: savedClasses,
+			classes,
 			questions: savedQuestions,
 			authorId,
 		});
@@ -76,12 +80,14 @@ const addLesson = async (req, res) => {
 
 		// Обновляем поле lessons у классов
 		for (const oneClass of classes) {
-			const existingClass = await Class.findById(oneClass._id);
+			const existingClass = await Class.findById(oneClass);
 
 			if (existingClass) {
 				existingClass.lessons.push(lesson._id);
 				await existingClass.save();
 			}
+
+			const existingClass2 = await Class.findById(oneClass);
 		}
 
 		// Добавляем айди урока пользователю в поле authorLessons
