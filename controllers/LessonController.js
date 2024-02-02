@@ -57,7 +57,7 @@ const addLesson = async (req, res) => {
 		const savedClasses = [];
 
 		for (const oneClass of classes) {
-			const existingClass = await Class.findById(oneClass._id);
+			const existingClass = await Class.findById(oneClass);
 
 			if (existingClass) {
 				savedClasses.push(existingClass);
