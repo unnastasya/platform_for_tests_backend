@@ -201,57 +201,71 @@ const updateLesson = async (req, res) => {
 			return res.status(404).json({ error: "Lesson not found" });
 		}
 		const savedQuestions = [];
+		if (questions) {
+			for (const question of questions) {
+				if ("_id" in question) {
+					const existingQuestion = await Question.findById(
+						question._id
+					);
+					const {
+						questionText,
+						description,
+						criteriaRating,
+						images,
+						criteria,
+					} = question;
 
-		for (const question of questions) {
-			if ("_id" in question) {
-				const existingQuestion = await Question.findById(question._id);
-				const {
-					questionText,
-					description,
-					criteriaRating,
-					images,
-					criteria,
-				} = question;
+					existingQuestion.questionText = questionText;
+					existingQuestion.description = description;
+					existingQuestion.criteriaRating = criteriaRating;
+					existingQuestion.images = images;
+					existingQuestion.criteria = criteria;
 
-				existingQuestion.questionText = questionText;
-				existingQuestion.description = description;
-				existingQuestion.criteriaRating = criteriaRating;
-				existingQuestion.images = images;
-				existingQuestion.criteria = criteria;
+					await existingQuestion.save();
 
-				await existingQuestion.save();
+					savedQuestions.push(question);
+				} else {
+					const {
+						questionText,
+						description,
+						criteriaRating,
+						images,
+						criteria,
+					} = question;
 
-				savedQuestions.push(question);
-			} else {
-				const {
-					questionText,
-					description,
-					criteriaRating,
-					images,
-					criteria,
-				} = question;
+					const newQuestion = new Question({
+						questionText,
+						description,
+						criteriaRating,
+						criteria,
+						images,
+					});
 
-				const newQuestion = new Question({
-					questionText,
-					description,
-					criteriaRating,
-					criteria,
-					images,
-				});
-
-				savedQuestions.push(newQuestion);
-				await newQuestion.save();
+					savedQuestions.push(newQuestion);
+					await newQuestion.save();
+				}
 			}
 		}
 
 		// Обновление данных урока
-		existingLesson.name = name;
-		existingLesson.description = description;
-		existingLesson.doneCount = doneCount;
-		existingLesson.allCriteriaRating = allCriteriaRating;
-		existingLesson.questions = savedQuestions; // Массив вопросов передается целиком для обновления
-		existingLesson.classes = classes; // Массив классов передается целиком для обновления
-
+		if (name) {
+			existingLesson.name = name;
+		}
+		if (description) {
+			existingLesson.description = description;
+		}
+		if (doneCount) {
+			existingLesson.doneCount = doneCount;
+		}
+		if (allCriteriaRating) {
+			existingLesson.allCriteriaRating = allCriteriaRating;
+		}
+		if (savedQuestions) {
+			existingLesson.questions = savedQuestions; // Массив вопросов передается целиком для обновления
+		}
+		if (classes) {
+			existingLesson.classes = classes; // Массив классов передается целиком для обновления
+		}
 		// Сохранение обновленного урока в базе данных
 		await existingLesson.save();
 
