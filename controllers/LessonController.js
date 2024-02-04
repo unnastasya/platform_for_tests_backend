@@ -269,6 +269,35 @@ const updateLesson = async (req, res) => {
 		// Сохранение обновленного урока в базе данных
 		await existingLesson.save();
 
+		if (classes) {
+			for (const classId of classes) {
+				const classObject = await Class.findById(classId);
+				if (
+					!classObject.lessons.find((el) => String(el) === lessonId)
+				) {
+					classObject.lessons.push(lessonId);
+				}
+
+				await classObject.save();
+			}
+		}
+
+		const allClasses = await Class.find({ lessons: lessonId });
+
+		if (allClasses) {
+			for (let classObject of allClasses) {
+				const oneClass = await Class.findById(classObject);
+				if (classes.find((el) => el == String(oneClass._id))) {
+					continue;
+				} else {
+					oneClass.lessons = oneClass.lessons.filter(
+						(el) => String(el._id) !== lessonId
+					);
+				}
+				await oneClass.save();
+			}
+		}
+
 		res.status(200).json(existingLesson._id);
 	} catch (error) {
 		console.error("Error updating lesson:", error);
