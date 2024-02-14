@@ -3,6 +3,7 @@ const Lesson = require("../models/Lesson.js");
 const User = require("../models/User.js");
 
 const addDoneWork = async (req, res) => {
+	// достаем необходимые данные из тела запроса
 	const {
 		student,
 		lessonId,
@@ -13,6 +14,7 @@ const addDoneWork = async (req, res) => {
 		allCriteriaRating,
 	} = req.body;
 
+	// определяем новый объект DoneWork
 	const doneWork = new DoneWork({
 		student,
 		lessonId,
@@ -30,13 +32,14 @@ const addDoneWork = async (req, res) => {
 		// Увеличиваем счетчик doneCount у соответствующего урока
 		await Lesson.updateOne({ _id: lessonId }, { $inc: { doneCount: 1 } });
 
+		// возвращаем объект с полем id сохраненной работы
 		res.status(201).json({ id: savedDoneWork._id });
 	} catch (error) {
-		console.error("Error saving done work:", error);
-		res.status(500).json({ error: "Failed to save done work" });
+		res.status(500).json({ error: "Сохранить работу не удалось" });
 	}
 };
 
+// ! вернет готовые работы доступные для учителя
 const getDoneWorks = async (req, res) => {
 	try {
 		const authorId = req.params.authorId; // Получаем id автора из параметров запроса
@@ -45,7 +48,7 @@ const getDoneWorks = async (req, res) => {
 		const authorUser = await User.findById(authorId);
 
 		if (!authorUser) {
-			return res.status(404).json({ error: "Author not found" });
+			return res.status(404).json({ error: "Автор уроков не найден" });
 		}
 
 		// Находим все готовые работы, у которых lessonId присутствует в authorLessons у пользователя
@@ -60,20 +63,27 @@ const getDoneWorks = async (req, res) => {
 					model: "Class",
 				},
 			});
+		const doneWorksNotVerified = doneWorks.filter(
+			(work) => !work.isVerified
+		);
+		const doneWorksVerified = doneWorks.filter((work) => work.isVerified);
 
-		res.json(doneWorks);
+		res.json([...doneWorksNotVerified, ...doneWorksVerified]);
 	} catch (error) {
 		console.error("Error retrieving done works:", error);
-		res.status(500).json({ error: "Failed to retrieve done works" });
+		res.status(500).json({
+			error: "Не удалось получить готовые работы доступные автору",
+		});
 	}
 };
 
+// ! вернет готовые работы студента
 const getStudentsDoneWorks = async (req, res) => {
 	try {
 		const studentId = req.params.studentId; // Получаем id автора из параметров запроса
 
 		// Находим все готовые работы, у которых lessonId присутствует в authorLessons у пользователя
-		const doneWorks = await DoneWork.find({ student: studentId })
+		let doneWorks = await DoneWork.find({ student: studentId })
 			.populate("lessonId")
 			.populate({
 				path: "student",
@@ -86,7 +96,9 @@ const getStudentsDoneWorks = async (req, res) => {
 		res.json(doneWorks);
 	} catch (error) {
 		console.error("Error retrieving done works:", error);
-		res.status(500).json({ error: "Failed to retrieve done works" });
+		res.status(500).json({
+			error: "Не удалось получить готовые работы ученика",
+		});
 	}
 };
 
@@ -103,26 +115,34 @@ const getOneDoneWork = async (req, res) => {
 		})
 		.then((doneWork) => {
 			if (!doneWork) {
-				return res.status(404).json({ error: "Done work not found" });
+				return res
+					.status(404)
+					.json({ error: "Выполненная работа не найдена" });
 			}
 
 			res.json(doneWork);
 		})
 		.catch((error) => {
-			console.error("Error retrieving done work:", error);
-			res.status(500).json({ error: "Failed to retrieve done work" });
+			res.status(500).json({
+				error: "Не удалось получить выполненную работу",
+			});
 		});
 };
 
 const updateDoneWork = async (req, res) => {
+	// получаем id из параметра
 	const { id } = req.params;
+	// получаем данные для обновления из тела запроса
 	const { isVerified, rating, comment, successCriterias } = req.body;
 
 	try {
+		// находим работу
 		const doneWork = await DoneWork.findById(id);
 
 		if (!doneWork) {
-			return res.status(404).json({ error: "Done work not found" });
+			return res
+				.status(404)
+				.json({ error: "Выполненная работа не найдена" });
 		}
 
 		doneWork.isVerified = isVerified;
@@ -134,11 +154,11 @@ const updateDoneWork = async (req, res) => {
 
 		res.status(200).json(doneWork);
 	} catch (error) {
-		console.error("Error updating done work:", error);
-		res.status(500).json({ error: "Failed to update done work" });
+		res.status(500).json({ error: "Не удалось отредактировать работу" });
 	}
 };
 
+// ! описать
 const getDoneWorksByStudentId = async (req, res) => {
 	const studentId = req.params.studentId;
 	const activeUserId = req.params.activeUserId;
@@ -147,7 +167,7 @@ const getDoneWorksByStudentId = async (req, res) => {
 		const authorUser = await User.findById(activeUserId);
 
 		if (!authorUser) {
-			return res.status(404).json({ error: "Author not found" });
+			return res.status(404).json({ error: "Пользователь не найден" });
 		}
 
 		const doneWorks = await DoneWork.find({
@@ -162,10 +182,12 @@ const getDoneWorksByStudentId = async (req, res) => {
 					model: "Class",
 				},
 			});
+
 		res.status(200).json(doneWorks);
 	} catch (error) {
-		console.error("Error retrieving done works:", error);
-		res.status(500).json({ error: "Failed to retrieve done works" });
+		res.status(500).json({
+			error: "Не удалось получить все готовые работы студента доступные автору",
+		});
 	}
 };
 
